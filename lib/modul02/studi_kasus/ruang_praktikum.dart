@@ -26,12 +26,64 @@ class _RuangPraktikumPageState extends State<RuangPraktikumPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: roomSessions.length,
-        itemBuilder: (context, index) {
-          return _RoomCard(
-            session: roomSessions[index],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+
+          int columns;
+          if (width < 600) {
+            columns = 1;
+          } else if (width < 840) {
+            columns = 2;
+          } else {
+            columns = 3;
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Status penggunaan ruang hari ini',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Ruang Rapat & Coworking',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: columns == 1
+                      ? ListView.separated(
+                          itemCount: roomSessions.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
+                            return _RoomCard(
+                              session: roomSessions[index],
+                            );
+                          },
+                        )
+                      : GridView.builder(
+                          itemCount: roomSessions.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: columns == 2 ? 1.15 : 1.25,
+                          ),
+                          itemBuilder: (context, index) {
+                            return _RoomCard(
+                              session: roomSessions[index],
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -53,7 +105,6 @@ class _RoomCard extends StatelessWidget {
     return Stack(
       children: [
         Card(
-          margin: const EdgeInsets.only(bottom: 12),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 28, 16, 16),
             child: Column(
