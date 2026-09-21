@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import '../../models/room_session.dart';
 
 class RuangPraktikumPage extends StatefulWidget {
-  const RuangPraktikumPage({super.key});
+  const RuangPraktikumPage({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
+
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
 
   @override
   State<RuangPraktikumPage> createState() => _RuangPraktikumPageState();
@@ -31,12 +38,25 @@ class _RuangPraktikumPageState extends State<RuangPraktikumPage> {
         title: const Text('RuangKita'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 8),
             child: Center(
               child: Text(
                 'M02-2127',
                 style: Theme.of(context).textTheme.labelLarge,
               ),
+            ),
+          ),
+          IconButton(
+            tooltip: widget.isDarkMode
+                ? 'Aktifkan Light Mode'
+                : 'Aktifkan Dark Mode',
+            onPressed: () {
+              widget.onThemeChanged(!widget.isDarkMode);
+            },
+            icon: Icon(
+              widget.isDarkMode
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
             ),
           ),
         ],
@@ -259,26 +279,54 @@ class _RoomCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Icon(
                         Icons.meeting_room_outlined,
                         color: scheme.primary,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        session.activity,
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              session.activity,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              session.roomName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              session.category,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              session.time,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              session.description,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(session.roomName),
-                  const SizedBox(height: 4),
-                  Text(session.category),
-                  const SizedBox(height: 4),
-                  Text(session.time),
-                  const SizedBox(height: 8),
-                  Text(session.description),
                 ],
               ),
             ),
@@ -296,7 +344,11 @@ class _RoomCard extends StatelessWidget {
               color: scheme.primaryContainer,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(session.status),
+            child: Text(
+              session.status,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ),
       ],
